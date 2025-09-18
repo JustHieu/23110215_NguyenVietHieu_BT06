@@ -1,26 +1,28 @@
 server:
-port: 8080
-
+  port: 8080
 
 spring:
-datasource:
-url: jdbc:sqlserver://localhost:1433;databaseName=videodb;encrypt=true;trustServerCertificate=true
-username: sa
-password: Hieu228!
-jpa:
-hibernate:
-ddl-auto: update # dev: update / none in prod
-properties:
-hibernate:
-dialect: org.hibernate.dialect.SQLServerDialect
-open-in-view: false
-
+  datasource:
+    url: jdbc:sqlserver://localhost:1433;databaseName=videodb;encrypt=true;trustServerCertificate=true
+    username: sa
+    password: Hieu228!
+    web:
+      resources:
+        static-locations: classpath:/static/, file:./uploads/
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        default_schema: dbo
+    open-in-view: false
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 5MB
 
 app:
-upload-dir: uploads # thư mục gốc lưu file (tương đối so với project root)
-category-subdir: categories
+  upload-dir: uploads
+  category-subdir: categories
 
 
-logging:
-level:
-org.hibernate.SQL: warn

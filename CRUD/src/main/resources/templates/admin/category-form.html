@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: section}">
+<section>
+    <h1 th:text="${category.id} != null ? 'Sửa danh mục' : 'Thêm danh mục'"></h1>
+    <form th:action="${category.id} != null ? @{'/admin/categories/' + ${category.id}} : @{/admin/categories}"
+          method="post" enctype="multipart/form-data">
+        <label>Tên</label>
+        <input type="text" name="name" th:value="${category.name}" required>
+        <label>Mô tả</label>
+        <textarea name="description" th:text="${category.description}"></textarea>
+        <label>Ảnh</label>
+        <input type="file" name="image" accept="image/*">
+        <div th:if="${category.imagePath}">
+            <img th:src="${category.imagePath}" style="height:80px;">
+        </div>
+        <button type="submit">Lưu</button>
+    </form>
+</section>
+</html>

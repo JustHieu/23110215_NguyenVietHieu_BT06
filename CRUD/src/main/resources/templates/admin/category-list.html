@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: section}">
+<section>
+    <h1>Categories</h1>
+    <form method="get">
+        <input type="text" name="q" th:value="${q}" placeholder="Tìm tên...">
+        <button type="submit">Tìm</button>
+        <a th:href="@{/admin/categories/new}">+ Thêm</a>
+    </form>
+    <table border="1" cellpadding="6">
+        <thead><tr><th>ID</th><th>Tên</th><th>Ảnh</th><th>Hành động</th></tr></thead>
+        <tbody>
+        <tr th:each="c: ${page.content}">
+            <td th:text="${c.id}"></td>
+            <td th:text="${c.name}"></td>
+            <td>
+                <img th:if="${c.imagePath}" th:src="${c.imagePath}" alt="img" style="height:40px;">
+            </td>
+            <td>
+                <a th:href="@{'/admin/categories/' + ${c.id} + '/edit'}">Sửa</a>
+                <form th:action="@{'/admin/categories/' + ${c.id} + '/delete'}" method="post" style="display:inline">
+                    <button type="submit" onclick="return confirm('Xoá?')">Xoá</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <div>
+        <span th:text="${page.number + 1}"></span>/<span th:text="${page.totalPages}"></span>
+        <a th:if="${page.hasPrevious()}" th:href="@{|?q=${q}&page=${page.number-1}|}">Prev</a>
+        <a th:if="${page.hasNext()}" th:href="@{|?q=${q}&page=${page.number+1}|}">Next</a>
+    </div>
+</section>
+</html>

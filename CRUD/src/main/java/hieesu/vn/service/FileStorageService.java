@@ -1,39 +1,42 @@
 package hieesu.vn.service;
 
-
-mport org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-
 import java.io.IOException;
-import java.nio.file.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.UUID;
-
 
 @Service
 public class FileStorageService {
     private final Path root;
     private final String categorySubdir;
 
-
     public FileStorageService(
-            @Value("${app.upload-dir}") String uploadDir,
-            @Value("${app.category-subdir}") String categorySubdir) throws IOException {
+            @Value("${app.upload-dir:uploads}") String uploadDir,
+            @Value("${app.category-subdir:categories}") String categorySubdir
+    ) throws IOException {
         this.root = Path.of(uploadDir).toAbsolutePath().normalize();
         this.categorySubdir = categorySubdir;
         Files.createDirectories(root.resolve(categorySubdir));
     }
 
-
-    public String saveCategoryImage(MultipartFile file) throws IOException {
+    public String storeCategoryImage(MultipartFile file) {
         if (file == null || file.isEmpty()) return null;
-        String ext = StringUtils.getFilenameExtension(file.getOriginalFilename());
-        String filename = UUID.randomUUID() + (ext != null ? ("." + ext.toLowerCase()) : "");
-        Path target = root.resolve(categorySubdir).resolve(filename);
-        Files.copy(file.getInputStream(), target, StandardCopyOption.REPLACE_EXISTING);
-// trả về đường dẫn tương đối để client truy cập qua /uploads/**
-        return "/uploads/" + categorySubdir + "/" + filename;
+        try {
+            String ext = StringUtils.getFilenameExtension(file.getOriginalFilename());
+            String newName = UUID.randomUUID() + (ext != null ? "." + ext.toLowerCase() : "");
+            Path target = root.resolve(categorySubdir).resolve(newName);
+            Files.copy(file.getInputStream(), target, StandardCopyOption.REPLACE_EXISTING);
+
+            // Trả về URL để hiển thị ảnh
+            return "/uploads/" + categorySubdir + "/" + newName;
+        } catch (IOException e) {
+            throw new RuntimeException("Không lưu được file ảnh", e);
+        }
     }
 }

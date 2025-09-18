@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${mode=='create' ? 'Thêm Category' : 'Sửa Category'}">Category</title>
+</head>
+<body>
+<h1 th:text="${mode=='create' ? 'Thêm Category' : 'Sửa Category'}"></h1>
+
+<!-- ================== FORM CREATE ================== -->
+<form th:if="${mode == 'create'}"
+      th:action="@{/admin/categories/create}"
+      method="post" enctype="multipart/form-data" th:object="${form}">
+
+    <div>
+        <label>Tên *</label><br>
+        <input type="text" th:field="*{name}" required>
+        <div th:if="${#fields.hasErrors('name')}" th:errors="*{name}" style="color:red"></div>
+    </div>
+
+    <div>
+        <label>Mô tả</label><br>
+        <textarea th:field="*{description}" rows="4"></textarea>
+    </div>
+
+    <div>
+        <label>Ảnh (tùy chọn)</label><br>
+        <input type="file" th:field="*{image}" accept="image/*">
+    </div>
+
+    <p>
+        <button type="submit">Lưu</button>
+        <a th:href="@{/admin/categories}">Hủy</a>
+    </p>
+</form>
+
+<!-- ================== FORM EDIT ================== -->
+<form th:if="${mode != 'create'}"
+      th:action="@{/admin/categories/{id}/edit(id=${form.id})}"
+      method="post" enctype="multipart/form-data" th:object="${form}">
+
+    <div>
+        <label>Tên *</label><br>
+        <input type="text" th:field="*{name}" required>
+        <div th:if="${#fields.hasErrors('name')}" th:errors="*{name}" style="color:red"></div>
+    </div>
+
+    <div>
+        <label>Mô tả</label><br>
+        <textarea th:field="*{description}" rows="4"></textarea>
+    </div>
+
+    <div>
+        <label>Ảnh (tùy chọn)</label><br>
+        <input type="file" th:field="*{image}" accept="image/*">
+    </div>
+
+    <p>
+        <button type="submit">Cập nhật</button>
+        <a th:href="@{/admin/categories}">Hủy</a>
+    </p>
+</form>
+
+<!-- Hiển thị ảnh hiện tại khi edit -->
+<div th:if="${category != null and category.imageUrl}">
+    <p>Ảnh hiện tại:</p>
+    <img th:src="${category.imageUrl}" alt="" style="height:100px">
+</div>
+</body>
+</html>

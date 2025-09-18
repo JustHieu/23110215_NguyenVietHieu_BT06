@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"><title>Categories</title>
+</head>
+<body>
+<h1>Categories</h1>
+
+<form th:action="@{/admin/categories}" method="get">
+    <input type="text" name="q" th:value="${q}" placeholder="Tìm theo tên">
+    <select name="size">
+        <option th:value="5"  th:selected="${size==5}">5</option>
+        <option th:value="10" th:selected="${size==10}">10</option>
+        <option th:value="20" th:selected="${size==20}">20</option>
+    </select>
+    <button type="submit">Tìm</button>
+    <a th:href="@{/admin/categories/create}">+ Thêm danh mục</a>
+</form>
+
+<p th:if="${msg}" th:text="${msg}" style="color:green"></p>
+
+<table border="1" cellpadding="6" cellspacing="0">
+    <thead>
+    <tr>
+        <th>ID</th><th>Tên</th><th>Slug</th><th>Ảnh</th><th>Hành động</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="c : ${data.content}">
+        <td th:text="${c.id}"></td>
+        <td th:text="${c.name}"></td>
+        <td th:text="${c.slug}"></td>
+        <td><img th:if="${c.imageUrl}" th:src="${c.imageUrl}" style="height:40px" alt=""></td>
+        <td>
+            <a th:href="@{|/admin/categories/${c.id}/edit|}">Sửa</a>
+            <form th:action="@{|/admin/categories/${c.id}/delete|}" method="post" style="display:inline">
+                <button type="submit" onclick="return confirm('Xóa?')">Xóa</button>
+            </form>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<div>
+    <span th:text="'Trang ' + ${data.number + 1} + '/' + ${data.totalPages}"></span>
+    <div>
+        <a th:if="${!data.first}" th:href="@{/admin/categories(q=${q},page=${data.number-1},size=${size})}">« Prev</a>
+        <a th:if="${!data.last}"  th:href="@{/admin/categories(q=${q},page=${data.number+1},size=${size})}">Next »</a>
+    </div>
+</div>
+</body>
+</html>
